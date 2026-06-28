@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Smart Ration System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Smart Ration</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('add_stock') }}">Add Stock</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('distribute') }}">Distribute</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('transactions') }}">Transactions</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash messages -->
+  <div class="container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <div class="container mt-3">
+    <!-- Summary Cards -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Distributors</h5>
+            <p class="card-text fs-3">{{ distributors }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Collectors</h5>
+            <p class="card-text fs-3">{{ collectors }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-info mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Stock Items</h5>
+            <p class="card-text fs-3">{{ stock|length }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stock Table -->
+    <h4 class="mt-4">Available Stock</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in stock %}
+          <tr>
+            <td>{{ s.item_name }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>{{ s.unit }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Distribute Request Link -->
+    <div class="mt-3 mb-4">
+      <a href="{{ url_for('distribute') }}" class="btn btn-primary">
+        Create Distribution Request
+      </a>
+    </div>
+
+    <!-- Recent Transactions -->
+    <h4 class="mt-4">Recent Transactions</h4>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Collector</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Date/Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in transactions %}
+          <tr>
+            <td>{{ t.id }}</td>
+            <td>{{ t.collector_name}}</td>
+            <td>{{ t.item_name }}</td>
+            <td>{{ t.quantity  }}</td>
+            <td>{{ t.transaction_date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+The current system depends heavily on manual verification, which brings several built-in problems. Because of this, the ration distribution network becomes easy to misuse or manipulate.
+
+Some of the major issues that need quick digital improvement include corruption in handling ration supplies, the possibility of creating duplicate or fake ration cards, and large amounts of stock being diverted away from the actual beneficiaries and sold illegally.
+
+Since most records are maintained by hand, mistakes in data entry happen frequently. This also causes delays in updating stock details and makes it difficult for officials to keep track of the system in real time. Without proper monitoring, it becomes hard to detect fraud, mismanagement, or shortages on time.
+
+Due to these issues, many deserving families do not get their ration on schedule, and in some cases, they may not receive it at all.
+
+Across the world, governments are now shifting toward digital systems to make public services more transparent and efficient. Technologies like the Internet of Things (IoT) can help turn traditional manual operations into automatic and verifiable processes.
+
+Our Smart Ration Card System is designed keeping this requirement in mind. In this project, we use the ESP32 microcontroller, which has built-in Wi-Fi. This allows the ration distribution point to stay connected to an online database so that stock updates and beneficiary verification happen instantly.
+In this step, the person who is receiving the ration has to scan their fingerprint. The R307S sensor reads the fingerprint and compares it with the one stored in the system for that person’s RFID card. This makes sure that the real cardholder is actually present. So even if someone else gets hold of the RFID card, they still cannot collect the ration without the correct fingerprint.
+
+
+The ration is given only when all three checks are successful — the distributor’s fingerprint, the beneficiary’s RFID card, and the beneficiary’s fingerprint. If all of these match correctly, the system allows the transaction.
+
+After that, the system automatically calculates how much ration should be given, reduces the stock count in the database, and saves the entire transaction along with the date and time.
+
+Because both the distributor and the real beneficiary must be present and verified, the record of this transaction cannot be denied or changed later. This helps keep the process transparent and easier to audit.
+
+
+
+The Smart Ration Card System works as a single, connected IoT setup, where all the hardware and software parts work together through the ESP32 microcontroller.
+
+The system is divided into three main modules:
+
+Authentication Module:
+This part includes the MFRC522 RFID reader and the R307S fingerprint scanner.
+Its main purpose is to check both the distributor and the beneficiary. It first reads the RFID card and then confirms their fingerprints. This double-check makes sure that only the right person receives the ration, and only the authorized distributor can issue it.
+
+
+
+This module works like a security checkpoint. Only people who have been verified through the card and fingerprint can access the system.
+
+
+
+The ESP32 microcontroller is the main control unit of the system. It handles all the important operations.
+It reads the inputs from the sensors — the RFID reader through SPI and the fingerprint scanner through UART.
+It then runs the step-by-step checking process to confirm the distributor and the beneficiary.
+
+Because the ESP32 has two cores, it can handle sensor operations and network communication at the same time without slowing down.
+After the verification is successful, the ESP32 prepares the transaction details (such as user ID, ration quantity, and time) in a proper data format, like JSON, and sends it to the central server using its built-in Wi-Fi.
+
+Monitoring Module:
+This part removes the need for small local screens.
+
+
+
+
+One important feature of the R307S fingerprint sensor is that it has its own small processor inside. This means it can capture the fingerprint image, compare it with the stored template, and manage the secure fingerprint data on its own. Because of this, the ESP32 does not need to do heavy processing, and the actual fingerprint data stays inside the sensor, which improves security.
+
+The sensor sends the verified information to the ESP32 through a UART (serial) connection.
+
+
+
+A regulated 5V to 12V power supply is used to provide steady power to all the components, making sure the system runs smoothly. Interfacing circuits are also added to handle communication between parts that work on different voltages or communication standards. This helps all the hardware components connect and work together without any issues.
+
+
+The software side of this system connects the physical verification happening at the ration shop with the online database where all records are stored. This helps keep the process transparent and easy to check later.
+
+The Arduino IDE is used to write and upload the C/C++ code to the ESP32.
+This program controls the sensors, performs the two-step authentication process, connects the ESP32 to Wi-Fi, and prepares the data to send to the server. We also use libraries to make hardware communication easier and to help with quick testing and debugging.
+
+
+Flask is used to create the server and API. It receives the data (usually in JSON format) from the ESP32, updates the database, and provides the data to the web dashboard. Flask makes it possible for the hardware, database, and interface to communicate smoothly. It also keeps the user verification logs updated in real time.
+
+
+MySQL is used as the main database to store all important records. It safely stores beneficiary details, distributor details, fingerprint templates, and all transaction records with date and time. This organized storage makes it easy to check past records whenever needed and  helps during inspections and audits.
+
+
+These are used to build the web dashboard interface. The dashboard shows live stock levels, past transaction records, and authentication logs in a clear and user-friendly way on a laptop screen. This helps officials monitor the system remotely and maintain control over the distribution process.

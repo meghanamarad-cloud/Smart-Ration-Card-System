@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pending Distribution</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h2>Pending Distribution ID: {{ pending.id }}</h2>
+  <p>Item ID: {{ pending.item_id }} | Quantity: {{ pending.quantity }}</p>
+  
+  <p>Status: <span id="status-text">{{ pending.status }}</span></p>
+  <button id="start-btn">Start Distribution</button>
+
+  <p>Keep hardware ready (place Distributor finger first)</p>
+
+<script>
+const pid = {{ pending.id }};
+const statusText = document.getElementById('status-text');
+const startBtn = document.getElementById('start-btn');
+
+// 1) Start button triggers server to mark pending ready
+startBtn.onclick = () => {
+    fetch(`/start_distribution/${pid}`, {method:'POST'})
+      .then(resp=>resp.json())
+      .then(data=>console.log("Distribution started", data));
+    startBtn.disabled = true; // prevent double click
+};
+
+// 2) Poll pending status every 2s
+const poll = setInterval(() => {
+    fetch(`/pending_status_ajax/${pid}`)
+      .then(resp=>resp.json())
+      .then(data => {
+          statusText.innerText = data.status_message;
+          if(data.status=='done' || data.status=='failed') {
+              clearInterval(poll);
+          }
+      });
+}, 2000);
+</script>
+</body>
+</html>
